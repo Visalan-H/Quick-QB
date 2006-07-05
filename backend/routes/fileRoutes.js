@@ -5,7 +5,7 @@ const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const { verifyToken } = require('../utils/jwt');
+const auth = require('../middleware/auth');
 
 // Configure cloudinary
 cloudinary.config({
@@ -18,7 +18,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'question-banks',
+        folder: 'question-banks/apr2026/',
         allowed_formats: 'pdf',
         resource_type: 'raw',
         public_id: (req, file) => {
@@ -30,12 +30,23 @@ const storage = new CloudinaryStorage({
 });
 
 // Create multer upload middleware
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 10 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype !== 'application/pdf') {
+            return cb(new Error('Only PDF files are allowed'));
+        }
+        cb(null, true);
+    }
+});
 
 // GET /all - Get all files
 router.get('/all', async (req, res) => {
     try {
-        const { sem = "dec2025" } = req.query;
+        const { sem = "apr2026" } = req.query;
         const files = await File.find({ sem: sem });
         if (files) {
             return res.status(200).json(files)
@@ -50,7 +61,7 @@ router.get('/all', async (req, res) => {
 // GET /check/:subCode/:contentType - Check if document exists with content type
 router.get('/check/:subCode/:contentType', async (req, res) => {
     try {
-        const { sem = "dec2025" } = req.query;
+        const { sem = "apr2026" } = req.query;
         const { subCode, contentType } = req.params;
         const existingFile = await File.findOne({
             sem: sem,
@@ -75,21 +86,17 @@ router.get('/check/:subCode/:contentType', async (req, res) => {
 });
 
 // POST /new - Upload new file
-router.post('/new', upload.single('file'), async (req, res) => {
+router.post('/new', auth, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ msg: "No file uploaded" });
+            return res.status(400).json({ success: false, message: 'Please select a PDF file to upload.', error: 'No file uploaded' });
         }
 
-        // Get username from token if available
+        // Get username from verified auth context
         let uploadedBy = null;
-        const token = req.cookies?.token;
-        if (token) {
-            try {
-                const decoded = verifyToken(token);
-                const user = await User.findOne({ email: decoded.email });
-                if (user) uploadedBy = user.username;
-            } catch { }
+        const user = await User.findOne({ email: req.user.email });
+        if (user) {
+            uploadedBy = user.username;
         }
 
         const newFile = await File.create({
@@ -101,9 +108,17 @@ router.post('/new', upload.single('file'), async (req, res) => {
             uploadedBy
         });
 
-        return res.status(201).json(newFile);
+        return res.status(201).json({ success: true, message: 'File uploaded successfully.', file: newFile });
     } catch (error) {
-        return res.status(500).json({ error: 'Upload failed' });
+        if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ success: false, message: 'File size exceeds the 10MB limit.' });
+        }
+
+        if (error.message === 'Only PDF files are allowed') {
+            return res.status(400).json({ success: false, message: 'Only PDF files are allowed.' });
+        }
+
+        return res.status(500).json({ success: false, message: 'Unable to upload file right now. Please try again.' });
     }
 });
 

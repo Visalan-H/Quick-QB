@@ -17,6 +17,13 @@ const Register = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const getErrorMessage = (err, fallback) => {
+        if (err?.response?.data?.message) return err.response.data.message;
+        if (err?.response?.data?.error) return err.response.data.error;
+        if (err?.code === 'ERR_NETWORK') return 'Unable to reach server. Please check your internet connection.';
+        return fallback;
+    };
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -37,8 +44,8 @@ const Register = () => {
             } else {
                 setError(data.message);
             }
-        } catch {
-            setError('Something went wrong');
+        } catch (err) {
+            setError(getErrorMessage(err, 'Unable to send OTP right now. Please try again.'));
         } finally {
             setIsLoading(false);
         }
@@ -56,24 +63,13 @@ const Register = () => {
         }
 
         try {
-            // Verify OTP with backend
-            const otpVerification = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/auth/verify-otp`,
-                { email: formData.email, otp: formData.otp }
-            );
-
-            if (!otpVerification.data.success) {
-                setError(otpVerification.data.message || 'Invalid OTP');
-                setIsLoading(false);
-                return;
-            }
-
-            // Register user with backend
+            // Register user with backend (OTP is validated server-side)
             const { data } = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/auth/register`,
                 {
                     username: formData.username,
                     email: formData.email,
+                    otp: formData.otp,
                     password: formData.password,
                     confirmPassword: formData.confirmPassword
                 },
@@ -85,8 +81,8 @@ const Register = () => {
             } else {
                 setError(data.message);
             }
-        } catch (error) {
-            setError(error.response?.data?.message || error.message || 'Registration failed. Please try again.');
+        } catch (err) {
+            setError(getErrorMessage(err, 'Unable to complete registration. Please try again.'));
         } finally {
             setIsLoading(false);
         }
@@ -141,6 +137,9 @@ const Register = () => {
                                 placeholder="Enter OTP sent to your email"
                                 required
                             />
+                            <small style={{ marginTop: '0.5rem', color: 'var(--gray-400)' }}>
+                                If the email is eligible, an OTP will be sent.
+                            </small>
                         </div>
 
                         <div className="form-group">
