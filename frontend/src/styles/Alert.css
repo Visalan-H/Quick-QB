@@ -1,0 +1,91 @@
+/* Alert.css */
+/* Base font settings */
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 20px 25px;
+    min-width: 320px;
+    max-width: 90%;
+    background-color: rgba(30, 30, 30, 0.9);
+    color: var(--color-primary);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    border: 1px solid var(--gray-800);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    animation: slideInAlert 0.5s ease-out forwards;
+}
+
+.alert.success {
+    border-left: 4px solid #667eea;
+}
+
+.alert.error {
+    border-left: 4px solid var(--gray-400);
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: var(--gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.alert-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.alert.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    animation: slideInAlert 0.5s ease-out forwards;
+}
+
+.alert.hide {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+@keyframes slideInAlert {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-100px);
+    }
+
+    70% {
+        transform: translateX(-50%) translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
