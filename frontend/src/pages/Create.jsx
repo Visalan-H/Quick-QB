@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import Alert from '../components/Alert';
 import '../styles/Create.css';
+import '../styles/help-text.css';
+import coursesData from '../../unique_courses.json';
 
 const Create = () => {
     const navigate = useNavigate();
@@ -15,15 +17,91 @@ const Create = () => {
     const [error, setError] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    const [fileName, setFileName] = useState('');
+    const [subName, setSubName] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    // Course search states
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []); const handleChange = (e) => {
+        const { name, value } = e.target;        // Capitalize subject code if that's what changed
+        if (name === 'subCode') {
+            const upperCaseValue = value.toUpperCase();
+
+            // Set the form data with uppercase value
+            setFormData(prev => ({
+                ...prev,
+                [name]: upperCaseValue
+            }));
+
+            // Look up the course name in coursesData if a code is entered directly
+            if (upperCaseValue && coursesData[upperCaseValue]) {
+                const courseName = coursesData[upperCaseValue];
+                setSubName(courseName);
+                setSearchTerm(courseName);
+            } else if (upperCaseValue) {
+                // Clear subject name if code doesn't exist
+                setSubName('');
+                setSearchTerm('');
+            }
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
+    // Handle course search
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        if (value.length > 2) {
+            // Search through course names
+            const results = Object.entries(coursesData)
+                .filter(([code, name]) =>
+                    name.toLowerCase().includes(value.toLowerCase())
+                )
+                .slice(0, 10); // Limit to 10 results
+
+            setSearchResults(results);
+            setShowDropdown(results.length > 0);
+        } else {
+            setSearchResults([]);
+            setShowDropdown(false);
+        }
+    };    // Handle course selection
+    const handleCourseSelect = (code, name) => {
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            subCode: code.toUpperCase() // Ensure code is uppercase
         }));
-    }; const handleFileChange = (e) => {
+        setSearchTerm(name);
+        setSubName(name); // Set the subject name from the course data
+        setShowDropdown(false);
+    };
+
+    // Handle custom subject name input
+    const handleSubNameChange = (e) => {
+        setSubName(e.target.value);
+    };
+
+    const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
             // Check if it's a PDF
@@ -39,13 +117,12 @@ const Create = () => {
                 setError('File size exceeds 10MB limit');
                 e.target.value = '';
                 return;
-            }
-
-            setFormData(prev => ({
+            } setFormData(prev => ({
                 ...prev,
                 file: selectedFile
             }));
-            setFileName(selectedFile.name);
+            // Don't override the subject name if it's already set from course selection
+
             setError(null);
         }
     };
@@ -80,13 +157,12 @@ const Create = () => {
             if (fileSizeInMB > 10) {
                 setError('File size exceeds 10MB limit');
                 return;
-            }
-
-            setFormData(prev => ({
+            } setFormData(prev => ({
                 ...prev,
                 file: droppedFile
             }));
-            setFileName(droppedFile.name);
+            // Don't override the subject name if it's already set from course selection
+
             setError(null);
         }
     };
@@ -97,33 +173,30 @@ const Create = () => {
     };
     const handleFileAreaClick = () => {
         document.getElementById('file').click();
-    };
-
-    const clearFileSelection = (e) => {
+    }; const clearFileSelection = (e) => {
         e.stopPropagation();
         setFormData(prev => ({
             ...prev,
             file: null
         }));
-        setFileName('');
+        setSubName('');
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
+        e.preventDefault(); setIsLoading(true);
         setError(null);
 
-        if (!formData.file || !formData.subCode || !formData.contentType) {
-            setError('Please fill all required fields');
+        if (!formData.file || !formData.subCode || !formData.contentType || !subName) {
+            setError('Please fill all required fields and select a course');
             setIsLoading(false);
             return;
         }
 
         try {
-            const data = new FormData();
-            data.append('file', formData.file);
+            const data = new FormData(); data.append('file', formData.file);
             data.append('subCode', formData.subCode);
             data.append('contentType', formData.contentType);
+            data.append('subName', subName);
 
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/new`, {
                 method: 'POST',
@@ -139,10 +212,10 @@ const Create = () => {
             // Reset form
             setFormData({
                 subCode: '',
-                contentType: 'Questions',
-                file: null
+                contentType: 'Questions', file: null
             });
-            setFileName('');
+            setSubName('');
+            setSearchTerm('');
 
             // Navigate back to home page after 8 seconds (increased from 2 seconds)
             setTimeout(() => {
@@ -173,7 +246,7 @@ const Create = () => {
             {/* Utility Links with headers - with bigger icons */}
             <div className="utility-links-container">
                 <div className="utility-link-wrapper right">
-                    <h3 className="utility-link-header">File size limit exceeded?</h3>
+                    <h3 className="utility-link-header">File size &gt; 10MB?</h3>
                     <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" rel="noopener noreferrer" className="utility-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -204,18 +277,61 @@ const Create = () => {
             </header>
 
             <form onSubmit={handleSubmit} className="upload-form">
-                <div className="form-group">
+                <div className="form-group">                    <label htmlFor="courseSearch">Search Course by Name</label>
+                    <input
+                        type="text"
+                        id="courseSearch"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Type course name to search..."
+                        autoComplete="off"
+                    />
+
+                    {/* Course search dropdown */}
+                    {showDropdown && (
+                        <div className="search-results-dropdown" ref={dropdownRef}>
+                            {searchResults.length > 0 ? (
+                                searchResults.map(([code, name]) => (
+                                    <div
+                                        key={code}
+                                        className="search-result-item"
+                                        onClick={() => handleCourseSelect(code, name)}
+                                    >
+                                        {name} ({code})
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-results">No results found</div>
+                            )}
+                        </div>
+                    )}
+                </div>                <div className="form-group">
                     <label htmlFor="subCode">Subject Code <span className="required">*</span></label>
                     <input
                         type="text"
                         id="subCode"
-                        name="subCode"
-                        value={formData.subCode}
+                        name="subCode" value={formData.subCode}
                         onChange={handleChange}
                         placeholder="E.g., 19CS404, 19AI505, 19EE404"
                         required
                     />
-                </div>                <div className="form-group">
+                </div>
+
+                {/* Custom subject name field - show only when subject code is entered but not found in database */}
+                {formData.subCode && !coursesData[formData.subCode] && (
+                    <div className="form-group">
+                        <label htmlFor="customSubName">Subject Name <span className="required">*</span></label>
+                        <input
+                            type="text"
+                            id="customSubName"
+                            value={subName}
+                            onChange={handleSubNameChange}
+                            placeholder="Enter the subject name for this code"
+                            required
+                        />
+                        <small className="help-text">This code isn't in our database. Please enter the subject name.</small>
+                    </div>
+                )}<div className="form-group">
                     <label>Content Type <span className="required">*</span></label>
                     <div className="radio-group">
                         <div className="radio-option">
@@ -257,48 +373,33 @@ const Create = () => {
                         onDragOver={handleDragOver}
                         onDrop={handleDrop}
                         onClick={handleFileAreaClick}
-                    >
-                        <input
+                    >                        <input
                             type="file"
                             id="file"
                             name="file"
                             onChange={handleFileChange}
                             accept=".pdf"
-                            required
                             style={{ display: 'none' }}
-                        />                        <div className="upload-icon">
+                        /><div className="upload-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
-                        </div>
-                        <p className="upload-text">
+                        </div>                        <p className="upload-text">
                             {isDragging
                                 ? 'Release to upload PDF'
-                                : fileName
+                                : formData.file
                                     ? 'Selected file:'
                                     : 'Drag and drop your PDF file here, or click to select'}
-                        </p>
-                        {fileName && (
+                        </p>                        {formData.file && (
                             <div className="file-info">
-                                <p className="file-name">{fileName}</p>
-                                <button
-                                    type="button"
-                                    className="clear-file-btn"
-                                    onClick={clearFileSelection}
-                                    aria-label="Clear file selection"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                </button>
+                                <p className="file-name">{formData.file.name}</p>
                             </div>
                         )}
                     </div>
                 </div>        {error && <div className="error-message">{error}</div>}                <button type="submit" className="submit-btn" disabled={isLoading}>
-                    {isLoading ? <Spinner /> : 'Upload Study Resource'}
+                    {isLoading ? <Spinner /> : 'Upload'}
                 </button>
             </form>
         </div>

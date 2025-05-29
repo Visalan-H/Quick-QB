@@ -1,0 +1,7 @@
+.help-text {
+    display: block;
+    font-size: var(--font-size-small);
+    color: var(--gray-400);
+    margin-top: 4px;
+    font-style: italic;
+}

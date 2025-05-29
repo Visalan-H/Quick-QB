@@ -38,22 +38,58 @@ const Home = () => {
         };
 
         fetchFiles();
-    }, []);
-
-    // Add cursor trail effect
+    }, []);    // Add cursor trail effect
     useEffect(() => {
+        let lastX = 0;
+        let lastY = 0;
+        let bounceTimeout;
+
         const handleMouseMove = (e) => {
             // Set position directly using top and left instead of transform
             if (cursorRef.current) {
                 cursorRef.current.style.left = `${e.clientX}px`;
                 cursorRef.current.style.top = `${e.clientY}px`;
+
+                // Add bounce effect when mouse moves quickly
+                const deltaX = Math.abs(e.clientX - lastX);
+                const deltaY = Math.abs(e.clientY - lastY);
+                const speed = deltaX + deltaY;
+
+                if (speed > 50) {
+                    cursorRef.current.classList.add('bounce');
+                    clearTimeout(bounceTimeout);
+                    bounceTimeout = setTimeout(() => {
+                        if (cursorRef.current) {
+                            cursorRef.current.classList.remove('bounce');
+                        }
+                    }, 300);
+                }
+
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        };
+
+        const handleClick = () => {
+            // Add bounce effect on click
+            if (cursorRef.current) {
+                cursorRef.current.classList.add('bounce');
+                clearTimeout(bounceTimeout);
+                bounceTimeout = setTimeout(() => {
+                    if (cursorRef.current) {
+                        cursorRef.current.classList.remove('bounce');
+                    }
+                }, 300);
             }
         };
 
         window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('click', handleClick);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('click', handleClick);
+            clearTimeout(bounceTimeout);
         };
     }, []);
 
@@ -65,37 +101,45 @@ const Home = () => {
         if (query.trim() === '') {
             setFilteredFiles(files);
             return;
-        }
-
-        // Simple filtering instead of fuzzy search
+        }        // Simple filtering instead of fuzzy search
         const filtered = files.filter(file =>
             file.subCode.toLowerCase().includes(query) ||
-            file.contentType.toLowerCase().includes(query)
+            file.contentType.toLowerCase().includes(query) ||
+            (file.subName && file.subName.toLowerCase().includes(query))
         );
 
         setFilteredFiles(filtered);
     };
 
     if (loading) return <Spinner />;
-    if (error) return <div className="error">Error: {error}</div>;
-
-    return (
+    if (error) return <div className="error">Error: {error}</div>; return (
         <div className="home-container">
             <div className="cursor-trail" ref={cursorRef}></div>
 
-            <section className="hero-section">
+            {/* Suggestion/Complaint Button - Top Right */}
+            <Link to="/suggestions" className="suggestion-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Feedback
+            </Link>            <section className="hero-section">
                 <div className="hero-content">
                     <h1>Quick-QB</h1>
                     <p className="hero-subtitle">Access and contribute to a community-driven question bank for your academic subjects.</p>
+
+                    {/* Made with love attribution */}
+                    <div className="hero-attribution">
+                        <p>made with <span className="heart">❤️</span> by vizz</p>
+                    </div>
+
                     <div className="search-container">
                         <div className="search-input-wrapper">
                             <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input
+                            </svg>                            <input
                                 type="text"
-                                placeholder="Enter Subject code"
+                                placeholder="Search by subject code or name"
                                 value={searchQuery}
                                 onChange={handleSearch}
                                 className="search-input"
@@ -156,8 +200,7 @@ const Home = () => {
                             Reset
                         </button>
                     )}
-                </div>
-                    <div className="file-grid">
+                </div>                    <div className="file-grid">
                         {filteredFiles.map((file, index) => (
                             <FileCard key={file._id} file={file} index={index} />
                         ))}
