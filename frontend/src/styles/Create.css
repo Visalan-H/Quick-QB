@@ -730,3 +730,45 @@ input:autofill {
 .create-container input[type="text"]:-webkit-autofill {
     border-color: var(--gray-600);
 }
+
+/* Course search dropdown styles */
+.search-results-dropdown {
+    position: absolute;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: rgba(42, 42, 42, 0.95);
+    border: 1px solid var(--gray-700);
+    border-radius: 8px;
+    margin-top: 5px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.search-result-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--color-primary);
+}
+
+.search-result-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.no-results {
+    padding: 12px 16px;
+    color: var(--gray-400);
+    text-align: center;
+}
+
+.info {
+    font-weight: normal;
+    color: var(--gray-400);
+    font-size: 0.8em;
+}

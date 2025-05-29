@@ -13,6 +13,10 @@ const FileSchema = new Schema({
         type: String,
         enum: ['Questions', 'Answers'],
         required: true,
+    },
+     subName: {
+        type: String,
+        required: true
     }
 })
 
