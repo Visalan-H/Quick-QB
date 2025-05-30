@@ -1,0 +1,474 @@
+/* LoadingScreen.css - Amazing loading screen that matches Quick-QB theme */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--gray-950) 0%, var(--gray-900) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Animated background pattern */
+.loading-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.008) 0%, transparent 50%),
+        radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+
+    0%,
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+
+    25% {
+        transform: translateX(-0.5%) translateY(0.3%);
+    }
+
+    50% {
+        transform: translateX(0.3%) translateY(-0.3%);
+    }
+
+    75% {
+        transform: translateX(-0.3%) translateY(0.5%);
+    }
+}
+
+/* Main loading container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Logo animation */
+.loading-logo {
+    margin-bottom: 3rem;
+    animation: logoEntrance 1.5s ease-out;
+}
+
+@keyframes logoEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.logo-icon {
+    position: relative;
+    margin-bottom: 1.5rem;
+    color: var(--gray-100);
+    padding: 2rem;
+}
+
+.logo-icon svg,
+.logo-icon img {
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.05));
+    animation: logoFloat 6s ease-in-out infinite;
+}
+
+.logo-bee {
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+    animation: logoFloat 6s ease-in-out infinite, beeGlow 4s ease-in-out infinite alternate;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logo-bee:hover {
+    animation: beeHeartBeat 3s ease-in-out infinite, beeHoverGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes beeGlow {
+    0% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 25px rgba(255, 193, 7, 0.3));
+    }
+}
+
+@keyframes beeHeartBeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    75% {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes beeHoverGlow {
+    0% {
+        filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.4));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 35px rgba(255, 193, 7, 0.8));
+    }
+}
+
+.loading-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gray-100) 0%, #ffffff 50%, var(--gray-200) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: titleShimmer 6s ease-in-out infinite;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+@keyframes titleShimmer {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.loading-subtitle {
+    font-size: 1.2rem;
+    color: var(--gray-400);
+    font-weight: 400;
+    margin: 0;
+    animation: subtitleFade 5s ease-in-out infinite alternate;
+}
+
+@keyframes subtitleFade {
+    0% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Animated loading dots */
+.loading-dots-container {
+    width: 100%;
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gray-100) 0%, #ffffff 100%);
+    animation: dotPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.dot:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.dot:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+}
+
+.loading-text {
+    font-size: 1rem;
+    color: var(--gray-300);
+    font-weight: 400;
+    opacity: 0.8;
+    animation: textFade 3s ease-in-out infinite;
+}
+
+@keyframes textFade {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Floating particles */
+.loading-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: particleFloat 8s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.particle:nth-child(1) {
+    top: 10%;
+    left: 10%;
+}
+
+.particle:nth-child(2) {
+    top: 20%;
+    left: 80%;
+}
+
+.particle:nth-child(3) {
+    top: 30%;
+    left: 20%;
+}
+
+.particle:nth-child(4) {
+    top: 40%;
+    left: 90%;
+}
+
+.particle:nth-child(5) {
+    top: 50%;
+    left: 5%;
+}
+
+.particle:nth-child(6) {
+    top: 60%;
+    left: 70%;
+}
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translateY(-10px) scale(1.1);
+        opacity: 0.3;
+    }
+}
+
+/* Study icons floating animation */
+.floating-icons {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-icon {
+    position: absolute;
+    font-size: 1.5rem;
+    opacity: 0.05;
+    animation: iconFloat 12s ease-in-out infinite;
+    animation-delay: var(--delay);
+    left: var(--x);
+    top: var(--y);
+}
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.05;
+    }
+
+    25% {
+        transform: translateY(-8px) rotate(2deg);
+        opacity: 0.15;
+    }
+
+    50% {
+        transform: translateY(-5px) rotate(-1deg);
+        opacity: 0.1;
+    }
+
+    75% {
+        transform: translateY(-10px) rotate(1deg);
+        opacity: 0.2;
+    }
+}
+
+/* Footer */
+.loading-footer {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.loading-footer p {
+    color: var(--gray-500);
+    font-size: 0.9rem;
+    margin: 0;
+    animation: footerFade 3s ease-in-out infinite alternate;
+}
+
+.heart {
+    color: #ff6b6b;
+    animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes footerFade {
+    0% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .loading-title {
+        font-size: 2.8rem;
+    }
+
+    .loading-subtitle {
+        font-size: 1rem;
+    }
+
+    .logo-icon svg,
+    .logo-icon img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .floating-icon {
+        font-size: 1.5rem;
+    }
+
+    .loading-container {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loading-title {
+        font-size: 2.2rem;
+    }
+
+    .loading-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .logo-icon svg,
+    .logo-icon img {
+        width: 50px;
+        height: 50px;
+    }
+}
