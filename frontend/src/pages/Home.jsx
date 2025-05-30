@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 // Remove Fuse import
-import Spinner from '../components/Spinner';
+import LoadingScreen from '../components/LoadingScreen';
 import FileCard from '../components/FileCard';
 import '../styles/Home.css';
 
@@ -23,8 +23,7 @@ const Home = () => {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/all`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch files');
-                }
-                const data = await response.json();
+                } const data = await response.json();
                 setFiles(data);
                 setFilteredFiles(data);
 
@@ -111,7 +110,7 @@ const Home = () => {
         setFilteredFiles(filtered);
     };
 
-    if (loading) return <Spinner />;
+    if (loading) return <LoadingScreen />;
     if (error) return <div className="error">Error: {error}</div>; return (
         <div className="home-container">
             <div className="cursor-trail" ref={cursorRef}></div>
