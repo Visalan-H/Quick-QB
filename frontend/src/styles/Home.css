@@ -8,7 +8,40 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 30px 20px 60px;
+    position: relative;
     /* Added top padding for space */
+}
+
+/* Suggestion Button - Top Right */
+.suggestion-button {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.suggestion-button:hover {
+    background: rgba(102, 126, 234, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.suggestion-button svg {
+    flex-shrink: 0;
 }
 
 /* Hero Section */
@@ -244,19 +277,97 @@
 
 /* Cursor Trail */
 .cursor-trail {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.8);
     position: fixed;
     pointer-events: none;
     z-index: 9999;
     top: 0;
     left: 0;
-    transition: top 0.2s, left 0.2s;
-    margin-left: -10px;
-    margin-top: -10px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        left 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        transform 0.1s ease-out;
+    margin-left: -7.5px;
+    margin-top: -7.5px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.cursor-trail:hover {
+    transform: scale(1.2);
+}
+
+.cursor-trail.bounce {
+    animation: bounceScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceScale {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Hero attribution */
+.hero-attribution {
+    margin: 0 0 1.5rem 0;
+    opacity: 0.8;
+}
+
+.hero-attribution p {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.hero-attribution .heart {
+    color: #ff6b6b;
+    font-size: 1rem;
+    display: inline-block;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    margin: 0 2px;
+}
+
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.hero-attribution:hover p {
+    color: #b0b0b0;
+}
+
+.hero-attribution:hover .heart {
+    color: #ff5555;
+    transform: scale(1.2);
 }
 
 /* Responsive Adjustments */
@@ -286,6 +397,29 @@
     .file-grid {
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 25px;
+    }
+
+    /* Responsive suggestion button */
+    .suggestion-button {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Mobile specific styles */
+@media (max-width: 480px) {
+    .suggestion-button {
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .suggestion-button span {
+        display: none;
+        /* Hide text on very small screens, show only icon */
     }
 }
 

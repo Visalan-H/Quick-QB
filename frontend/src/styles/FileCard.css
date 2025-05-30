@@ -88,6 +88,36 @@
     color: var(--gray-400);
     font-size: var(--font-size-medium);
     line-height: 1.6;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    height: 90px;
+    /* Fixed height to ensure consistent spacing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.file-content .subject-name {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--gray-300);
+    text-align: center;
+    padding: 0;
+    position: relative;
+    padding-left: 0;
+    width: 100%;
+    /* Ensure full width */
+    overflow: hidden;
+    /* Hide overflow text */
+    text-overflow: ellipsis;
+    /* Add ellipsis for long text */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* Limit to 2 lines */
+    line-clamp: 2;
+    /* Standard property for compatibility */
+    -webkit-box-orient: vertical;
 }
 
 .file-content p {
@@ -96,7 +126,8 @@
     padding-left: 18px;
 }
 
-.file-content p::before {
+/* This rule won't apply to elements with subject-name class */
+.file-content p:not(.subject-name)::before {
     content: '';
     position: absolute;
     left: 0;
@@ -112,31 +143,40 @@
     padding: var(--space-md) var(--card-padding) var(--card-padding);
     border-top: none;
     text-align: center;
+    height: 80px;
+    /* Fixed height for consistent footer spacing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .view-btn {
     display: inline-block;
-    background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
-    color: var(--color-primary);
-    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--gray-200), var(--color-accent));
+    color: var(--gray-950);
+    padding: 10px 24px;
     text-decoration: none;
     border-radius: 30px;
     font-size: var(--font-size-normal);
     font-weight: var(--font-weight-medium);
+    font-family: inherit;
     letter-spacing: var(--letter-spacing-wide);
     transition: all var(--transition-normal);
-    border: 1px solid var(--gray-700);
+    border: none;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    min-width: 120px;
+    /* Ensure consistent button width */
+    text-align: center;
 }
 
 .view-btn:hover {
-    background: linear-gradient(135deg, var(--gray-600), var(--gray-700));
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-    border-color: var(--gray-600);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-lg), 0 8px 25px rgba(255, 255, 255, 0.1);
+    color: var(--gray-950);
+    /* Explicitly maintain the same text color when hovered */
 }
 
 .view-btn:active {
@@ -150,7 +190,7 @@
     left: 50%;
     width: 0;
     height: 0;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     opacity: 0;
