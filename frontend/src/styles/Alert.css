@@ -11,8 +11,8 @@
     transform: translateX(-50%);
     z-index: 1000;
     padding: 20px 25px;
-    min-width: 320px;
-    max-width: 90%;
+    width: calc(100% - 40px);
+    max-width: 600px;
     background-color: rgba(30, 30, 30, 0.9);
     color: var(--color-primary);
     border-radius: 12px;
@@ -25,7 +25,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: opacity 0.3s, transform 0.3s;
-    animation: slideInAlert 0.5s ease-out forwards;
+    animation: slideInAlertDesktop 0.5s ease-out forwards;
 }
 
 .alert.success {
@@ -64,7 +64,7 @@
 .alert.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
-    animation: slideInAlert 0.5s ease-out forwards;
+    animation: slideInAlertDesktop 0.5s ease-out forwards;
 }
 
 .alert.hide {
@@ -74,7 +74,116 @@
     transition: opacity 0.3s, transform 0.3s;
 }
 
-@keyframes slideInAlert {
+/* Responsive design for Alert component */
+@media (max-width: 768px) {
+    .alert {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 400px;
+        height: auto;
+        min-height: auto;
+        padding: 1.5rem;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        text-align: center;
+        position: fixed;
+        z-index: 10000;
+        background-color: rgba(30, 30, 30, 0.95);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        animation: slideInAlert 0.5s ease-out forwards;
+    }
+
+    .alert-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .alert-close-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        z-index: 10001;
+    }
+
+    .alert-close-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .alert.show {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+        animation: slideInAlert 0.5s ease-out forwards;
+    }
+
+    .alert.hide {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(-20px);
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+}
+
+@media (max-width: 480px) {
+    .alert {
+        padding: 1.25rem;
+        width: 95%;
+        max-width: 350px;
+    }
+
+    .alert-content {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .alert-close-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 24px;
+        height: 24px;
+    }
+
+    .alert-close-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .alert {
+        padding: 1rem;
+        width: 98%;
+        max-width: 320px;
+    }
+
+    .alert-content {
+        font-size: 0.85rem;
+    }
+
+    .alert-close-btn {
+        width: 22px;
+        height: 22px;
+    }
+
+    .alert-close-btn svg {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@keyframes slideInAlertDesktop {
     0% {
         opacity: 0;
         transform: translateX(-50%) translateY(-100px);
@@ -87,5 +196,21 @@
     100% {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes slideInAlert {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(0.9);
+    }
+
+    70% {
+        transform: translate(-50%, -45%) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
 }
