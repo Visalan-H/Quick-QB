@@ -4,7 +4,7 @@ import PDFWarningModal from './PDFWarningModal';
 
 const FileCard = ({ file, index = 0 }) => {
     const [showWarning, setShowWarning] = useState(false);
-    const animationDelay = `${index * 0.1}s`;
+    const animationDelay = `${index * 0.035}s`;
 
     const handleViewPDF = (e) => {
         e.preventDefault();
