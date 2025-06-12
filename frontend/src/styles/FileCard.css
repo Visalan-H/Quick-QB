@@ -202,3 +202,14 @@
     height: 200px;
     opacity: 1;
 }
+
+/* Custom text selection styling for view button */
+.view-btn::selection {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.view-btn::-moz-selection {
+    background-color: #333333;
+    color: #ffffff;
+}
