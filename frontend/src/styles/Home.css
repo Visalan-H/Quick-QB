@@ -45,6 +45,48 @@
     flex-shrink: 0;
 }
 
+/* Cursor Toggle Button - Top Left */
+.cursor-toggle-button {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    /* Position in the left top corner */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(75, 85, 99, 0.9);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50%;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+}
+
+.cursor-toggle-button:hover {
+    background: rgba(75, 85, 99, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
+}
+
+.cursor-toggle-button svg {
+    flex-shrink: 0;
+}
+
+/* Hide cursor toggle on mobile devices */
+@media (max-width: 768px) {
+    .cursor-toggle-button {
+        display: none;
+    }
+}
+
 /* Hero Section */
 .hero-section {
     position: relative;
@@ -312,6 +354,13 @@
 
     100% {
         transform: scale(1);
+    }
+}
+
+/* Hide cursor trail on mobile devices */
+@media (max-width: 768px) {
+    .cursor-trail {
+        display: none;
     }
 }
 
