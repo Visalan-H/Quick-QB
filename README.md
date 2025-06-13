@@ -27,7 +27,7 @@ Quick-QB is a modern, full-stack web application that revolutionizes how student
 
 ## 🚀 Live Demo
 
-Experience Quick-QB in action: [Live Demo](https://quick-qb.vercel.app)
+Experience Quick-QB in action: [Live](https://quick-qb.vercel.app)
 
 ## 🛠️ Tech Stack
 
