@@ -49,7 +49,6 @@ Experience Quick-QB in action: [Live](https://quick-qb.vercel.app)
 - **Vercel** - Deployment and hosting frontend
 - **Render** - Hosting Backend
 - **Discord Webhooks** - Real-time notifications
-- **CORS** - Cross-origin resource sharing
 
 ## 📁 Project Structure
 
