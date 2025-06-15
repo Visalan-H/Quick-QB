@@ -164,6 +164,7 @@ const Home = () => {
                                 value={searchQuery}
                                 onChange={handleSearch}
                                 className="search-input"
+                                autoFocus
                             />
                             {searchQuery && (
                                 <button className="clear-search" onClick={() => { setSearchQuery(''); setFilteredFiles(files); }}>
