@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL_VERCEL, process.env.FRONTEND_URL_CF], 
 }));
 
 // Use routes
