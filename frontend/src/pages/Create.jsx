@@ -289,6 +289,7 @@ const Create = () => {
             data.append('subCode', formData.subCode);
             data.append('contentType', formData.contentType);
             data.append('subName', subName);
+            data.append('sem', "dec2025");
 
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/new`, {
                 method: 'POST',

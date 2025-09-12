@@ -11,15 +11,25 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    // Remove fuse state    // Add cursor trail state
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [showCursorTrail, setShowCursorTrail] = useState(true);
-    const cursorRef = useRef(null);
+
+    // Archive dropdown state
+    const [showArchiveDropdown, setShowArchiveDropdown] = useState(false);
+    const [selectedArchive, setSelectedArchive] = useState('dec2025');
+    const archiveDropdownRef = useRef(null);
+
+    const archiveOptions = [
+        { value: 'dec2025', label: 'Dec 2025' },
+        { value: 'may2025', label: 'May 2025' }
+    ];
 
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/all`);
+                const url = selectedArchive === 'may2025'
+                    ? `${import.meta.env.VITE_BASE_URL}/all?sem=may2025`
+                    : `${import.meta.env.VITE_BASE_URL}/all`;
+
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Failed to fetch files');
                 } const data = await response.json();
@@ -36,58 +46,19 @@ const Home = () => {
         };
 
         fetchFiles();
-    }, []);    // Add cursor trail effect
+    }, [selectedArchive]);
+
+    // Handle clicks outside archive dropdown
     useEffect(() => {
-        let lastX = 0;
-        let lastY = 0;
-        let bounceTimeout;
-
-        const handleMouseMove = (e) => {
-            // Set position directly using top and left instead of transform
-            if (cursorRef.current) {
-                cursorRef.current.style.left = `${e.clientX}px`;
-                cursorRef.current.style.top = `${e.clientY}px`;
-
-                // Add bounce effect when mouse moves quickly
-                const deltaX = Math.abs(e.clientX - lastX);
-                const deltaY = Math.abs(e.clientY - lastY);
-                const speed = deltaX + deltaY;
-
-                if (speed > 50) {
-                    cursorRef.current.classList.add('bounce');
-                    clearTimeout(bounceTimeout);
-                    bounceTimeout = setTimeout(() => {
-                        if (cursorRef.current) {
-                            cursorRef.current.classList.remove('bounce');
-                        }
-                    }, 300);
-                }
-
-                lastX = e.clientX;
-                lastY = e.clientY;
+        const handleClickOutside = (event) => {
+            if (archiveDropdownRef.current && !archiveDropdownRef.current.contains(event.target)) {
+                setShowArchiveDropdown(false);
             }
         };
 
-        const handleClick = () => {
-            // Add bounce effect on click
-            if (cursorRef.current) {
-                cursorRef.current.classList.add('bounce');
-                clearTimeout(bounceTimeout);
-                bounceTimeout = setTimeout(() => {
-                    if (cursorRef.current) {
-                        cursorRef.current.classList.remove('bounce');
-                    }
-                }, 300);
-            }
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('click', handleClick);
-
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('click', handleClick);
-            clearTimeout(bounceTimeout);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
@@ -110,39 +81,52 @@ const Home = () => {
     };
 
     if (loading) return <LoadingScreen />;
-    if (error) return <div className="error">Error: {error}</div>;    return (
+    if (error) return <div className="error">Error: {error}</div>; return (
         <div className="home-container">
-            {showCursorTrail && <div className="cursor-trail" ref={cursorRef}></div>}
 
-            {/* Cursor Trail Toggle - Top Left */}
-            <button 
-                className="cursor-toggle-button"
-                onClick={() => setShowCursorTrail(!showCursorTrail)}
-                title={showCursorTrail ? "Hide cursor trail" : "Show cursor trail"}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    {showCursorTrail ? (
-                        // Eye slash icon (hidden)
-                        <>
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                            <line x1="1" y1="1" x2="23" y2="23"></line>
-                        </>
-                    ) : (
-                        // Eye icon (visible)
-                        <>
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </>
+            {/* Archive Dropdown - Top Left */}
+            <div className='archive-button'>
+                <div className="archive-dropdown-container" ref={archiveDropdownRef}>
+                    <button
+                        className="archive-toggle-button"
+                        onClick={() => setShowArchiveDropdown(!showArchiveDropdown)}
+                        title="Select Archive"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <polyline points="9 14 12 17 15 14"></polyline>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                        </svg>
+                        <svg className={`archive-chevron ${showArchiveDropdown ? 'open' : ''}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+
+                    {showArchiveDropdown && (
+                        <div className="archive-dropdown">
+                            {archiveOptions.map((option) => (
+                                <div
+                                    key={option.value}
+                                    className={`archive-option ${selectedArchive === option.value ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        setSelectedArchive(option.value);
+                                        setShowArchiveDropdown(false);
+                                    }}
+                                >
+                                    {option.label}
+                                </div>
+                            ))}
+                        </div>
                     )}
-                </svg>
-            </button>
+                </div>
+            </div>
 
             {/* Suggestion/Complaint Button - Top Right */}
-            <Link to="/suggestions" className="suggestion-button">
+            <Link to="/suggestions" className="suggestion-button" title='Provide feedback'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
-                Feedback
             </Link>            <section className="hero-section">
                 <div className="hero-content">
                     <h1>Quick-QB</h1>
@@ -175,7 +159,7 @@ const Home = () => {
                                 </button>
                             )}
                         </div>
-                        <Link to="/create" className="cta-button">Upload Resource</Link>
+                        {selectedArchive === "dec2025" && <Link to="/create" className="cta-button">Upload Resource</Link>}
                     </div>
                 </div>
             </section>

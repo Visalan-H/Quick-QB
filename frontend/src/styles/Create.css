@@ -708,6 +708,7 @@ input[type="file"]:hover {
     padding: var(--space-sm) var(--space-lg);
     background-color: rgba(255, 255, 255, 0.07);
     border-radius: 30px;
+    min-width: fit-content;
     max-width: 90%;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: var(--shadow-sm);
@@ -717,9 +718,9 @@ input[type="file"]:hover {
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-medium);
     color: var(--color-primary);
-    max-width: 90%;
+    /* max-width: 90%; */
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
     white-space: nowrap;
 }
 
