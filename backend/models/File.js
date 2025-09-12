@@ -17,10 +17,14 @@ const FileSchema = new Schema({
      subName: {
         type: String,
         required: true
+    },
+    sem:{
+        type:String,
+        required:true
     }
 })
 
-FileSchema.index({ contentType: 1, subCode: 1 }, { unique: true });
+FileSchema.index({ contentType: 1, subCode: 1, sem:1 }, { unique: true });
 
 
 const File = model('File', FileSchema)

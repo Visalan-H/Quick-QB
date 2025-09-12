@@ -33,7 +33,8 @@ const upload = multer({ storage: storage });
 // GET /all - Get all files
 router.get('/all', async (req, res) => {
     try {
-        const files = await File.find({});
+        const {sem="dec2025"}=req.query;
+        const files = await File.find({sem:sem});
         if (files) {
             return res.status(200).json(files)
         }
@@ -48,8 +49,10 @@ router.get('/all', async (req, res) => {
 // GET /check/:subCode/:contentType - Check if document exists with content type
 router.get('/check/:subCode/:contentType', async (req, res) => {
     try {
+        const {sem="dec2025"} = req.query;
         const { subCode, contentType } = req.params;
         const existingFile = await File.findOne({
+            sem:sem,
             subCode: subCode.toUpperCase(),
             contentType: contentType
         });
@@ -82,7 +85,8 @@ router.post('/new', upload.single('file'), async (req, res) => {
             fileURL: req.file.path,
             subCode: req.body.subCode,
             contentType: req.body.contentType,
-            subName: req.body.subName
+            subName: req.body.subName,
+            sem:req.body.sem
         });
 
         return res.status(201).json(newFile);

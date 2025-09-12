@@ -45,44 +45,112 @@
     flex-shrink: 0;
 }
 
-/* Cursor Toggle Button - Top Left */
-.cursor-toggle-button {
+/* Archive Dropdown - Top Left */
+.archive-dropdown-container {
     position: fixed;
     top: 2rem;
     left: 2rem;
-    /* Position in the left top corner */
+    z-index: 1000;
+}
+
+.archive-toggle-button {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
     background: rgba(75, 85, 99, 0.9);
     color: white;
     border: none;
-    padding: 0.75rem;
-    border-radius: 50%;
+    padding: 0.75rem 1rem;
+    border-radius: 25px;
     font-weight: 600;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-    z-index: 1000;
     box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
     cursor: pointer;
-    width: 48px;
-    height: 48px;
+    font-size: 0.9rem;
 }
 
-.cursor-toggle-button:hover {
+.archive-toggle-button:hover {
     background: rgba(75, 85, 99, 1);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
 }
 
-.cursor-toggle-button svg {
+.archive-toggle-button svg {
     flex-shrink: 0;
 }
 
-/* Hide cursor toggle on mobile devices */
+.archive-label {
+    color: white;
+    font-weight: 600;
+}
+
+.archive-chevron {
+    transition: transform 0.3s ease;
+}
+
+.archive-chevron.open {
+    transform: rotate(180deg);
+}
+
+.archive-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    background: rgba(75, 85, 99, 0.95);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    min-width: 120px;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.archive-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.archive-option:last-child {
+    border-bottom: none;
+}
+
+.archive-option:hover {
+    background: rgba(102, 126, 234, 0.6);
+}
+
+.archive-option.selected {
+    background: rgba(102, 126, 234, 0.8);
+    font-weight: 600;
+}
+
+.archive-option.selected {
+    background: rgba(102, 126, 234, 0.8);
+    font-weight: 600;
+}
+
+/* Hide archive dropdown on mobile devices */
 @media (max-width: 768px) {
-    .cursor-toggle-button {
+    .archive-dropdown-container {
         display: none;
     }
 }
