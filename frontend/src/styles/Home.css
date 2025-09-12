@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(102, 126, 234, 0.9);
+    background: rgba(75, 85, 99, 0.9);
     color: white;
     text-decoration: none;
     padding: 0.75rem 1.25rem;
@@ -32,13 +32,13 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     z-index: 1000;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
 }
 
 .suggestion-button:hover {
-    background: rgba(102, 126, 234, 1);
+    background: rgba(75, 85, 99, 1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
 }
 
 .suggestion-button svg {
@@ -48,8 +48,8 @@
 /* Archive Dropdown - Top Left */
 .archive-dropdown-container {
     position: fixed;
-    top: 0.8rem;
-    left: 0.8rem;
+    top: 2rem;
+    left: 2rem;
     z-index: 1000;
 }
 
@@ -57,7 +57,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(75, 85, 99, 0.9);
+    background: rgba(102, 126, 234, 0.9);
     color: white;
     border: none;
     padding: 0.75rem 1.25rem;
@@ -66,15 +66,15 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     cursor: pointer;
     font-size: 0.9rem;
 }
 
 .archive-toggle-button:hover {
-    background: rgba(75, 85, 99, 1);
+    background: rgba(102, 126, 234, 1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 .archive-toggle-button svg {
@@ -692,6 +692,12 @@
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
     }
+
+    /* Responsive archive button */
+    .archive-dropdown-container {
+        top: 1rem;
+        left: 1rem;
+    }
 }
 
 /* Fix for button overlapping with title around 500px width */
@@ -704,7 +710,12 @@
 
     .suggestion-button {
         top: 0.8rem;
-        padding: 0.5rem 0.9rem;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .archive-dropdown-container {
+        top: 0.8rem;
+        left: 1rem;
     }
 }
 
@@ -713,8 +724,13 @@
     .suggestion-button {
         top: 0.75rem;
         right: 0.75rem;
-        padding: 0.5rem 0.8rem;
+        padding: 0.75rem 1.25rem;
         font-size: 0.8rem;
+    }
+
+    .archive-dropdown-container {
+        top: 0.75rem;
+        left: 0.75rem;
     }
 
     .suggestion-button span {
