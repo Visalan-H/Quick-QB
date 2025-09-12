@@ -48,8 +48,8 @@
 /* Archive Dropdown - Top Left */
 .archive-dropdown-container {
     position: fixed;
-    top: 2rem;
-    left: 2rem;
+    top: 0.8rem;
+    left: 0.8rem;
     z-index: 1000;
 }
 
@@ -60,8 +60,8 @@
     background: rgba(75, 85, 99, 0.9);
     color: white;
     border: none;
-    padding: 0.75rem 1rem;
-    border-radius: 25px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 50px;
     font-weight: 600;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -149,11 +149,7 @@
 }
 
 /* Hide archive dropdown on mobile devices */
-@media (max-width: 768px) {
-    .archive-dropdown-container {
-        display: none;
-    }
-}
+
 
 /* Hero Section */
 .hero-section {
