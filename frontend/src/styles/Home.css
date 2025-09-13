@@ -550,11 +550,17 @@
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .file-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width:450px){
+    .section-title {
+        font-size: 1.5rem !important;
     }
 }
 
