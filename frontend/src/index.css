@@ -388,3 +388,8 @@ textarea:focus {
 .m-xl {
   margin: var(--space-xl);
 }
+
+* {
+  outline: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
