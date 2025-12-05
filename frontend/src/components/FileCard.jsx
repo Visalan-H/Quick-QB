@@ -48,6 +48,7 @@ const FileCard = ({ file, index = 0 }) => {
                 </div>
                 <div className="file-content">
                     <p className="subject-name">{file.subName}</p>
+                    {file.uploadedBy && <p className="uploaded-by">Uploaded by {file.uploadedBy}</p>}
                 </div>
                 <div className="file-footer">
                     <button onClick={handleViewPDF} className="view-btn">

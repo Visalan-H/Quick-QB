@@ -11,6 +11,39 @@
     animation: fadeIn 0.8s ease-out;
     position: relative;
     min-height: 100vh;
+    overflow: hidden;
+}
+
+header.auth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    position: relative;
+}
+
+header.auth-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gray-700), transparent);
+}
+
+header.auth-header h1 {
+    font-size: 2rem;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, var(--gray-200), var(--color-accent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 
@@ -127,7 +160,9 @@ label {
     margin-left: var(--space-xs);
 }
 
-.create-container input[type="text"] {
+.create-container input[type="text"],
+.create-container input[type="email"],
+.create-container input[type="password"] {
     width: 100%;
     padding: 18px 22px;
     border: 1px solid var(--gray-700);
@@ -139,7 +174,9 @@ label {
     box-shadow: var(--shadow-sm);
 }
 
-.create-container input[type="text"]:focus {
+.create-container input[type="text"]:focus,
+.create-container input[type="email"]:focus,
+.create-container input[type="password"]:focus {
     outline: none;
     border-color: var(--gray-500);
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
@@ -167,7 +204,7 @@ label {
     justify-content: center;
     padding: 18px 20px;
     background-color: rgba(42, 42, 42, 0.4);
-    border: 1px solid var(--gray-700);
+    color: white;    border: 1px solid #cccccc;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -182,34 +219,41 @@ label {
 }
 
 .radio-label:hover {
-    background-color: rgba(50, 50, 50, 0.6);
-    border-color: var(--gray-600);
+    background-color: #f0f0f0;
+    color: black;
+    border-color: #999999;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .radio-text {
-    color: var(--color-primary);
+    color: white;
     flex: 1;
 }
 
 /* Checked state */
 input[type="radio"]:checked+.radio-label {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-color: #667eea;
-    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15);
-    transform: translateY(-1px);
+    background: #e8e8e8;
+    border-color: black;
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 input[type="radio"]:checked+.radio-label .radio-text {
-    color: #ffffff;
+    color: black;
     font-weight: var(--font-weight-bold);
 }
 
 /* Focus state */
 input[type="radio"]:focus+.radio-label {
     outline: none;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    color: black;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+input[type="radio"]:hover+.radio-label .radio-text {
+    color: black;
 }
 
 /* Responsive design */
@@ -514,7 +558,9 @@ input[type="radio"]:focus+.radio-label {
     }
 }
 
-.create-container input[type="text"]::placeholder {
+.create-container input[type="text"]::placeholder,
+.create-container input[type="email"]::placeholder,
+.create-container input[type="password"]::placeholder {
     color: var(--gray-500);
 }
 
@@ -567,8 +613,8 @@ input[type="file"]:hover {
 .submit-btn {
     display: block;
     width: 100%;
-    background: linear-gradient(135deg, var(--gray-200), var(--color-accent));
-    color: var(--gray-950);
+    background: white;
+    color: black;
     border: none;
     padding: 20px;
     font-size: var(--font-size-medium);
@@ -588,7 +634,9 @@ input[type="file"]:hover {
 
 .submit-btn:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: var(--shadow-lg), 0 8px 25px rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lg), 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+    color: black;
 }
 
 .submit-btn:active {
@@ -596,8 +644,8 @@ input[type="file"]:hover {
 }
 
 .submit-btn:disabled {
-    background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
-    color: var(--gray-500);
+    background: #cccccc;
+    color: #666666;
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
@@ -758,7 +806,7 @@ input[type="file"]:hover {
 
 .particle {
     position: absolute;
-    background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     animation: float 15s linear infinite;
 }
@@ -1016,7 +1064,7 @@ input[type="file"]:hover {
 }
 
 :global(.alert.success) {
-    border-left: 4px solid #667eea !important;
+    border-left: 4px solid black !important;
 }
 
 :global(.alert.error) {
@@ -1195,15 +1243,16 @@ input:autofill {
 }
 
 .home-button {
-    background: linear-gradient(135deg, var(--gray-200), var(--color-accent));
-    color: var(--gray-950);
-    border: 1px solid var(--color-accent);
+    background: white;
+    color: black;
+    border: 1px solid #cccccc;
 }
 
 .home-button:hover {
-    background: linear-gradient(135deg, var(--color-accent), var(--gray-200));
+    background: #f0f0f0;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: black;
 }
 
 @media (max-width: 480px) {

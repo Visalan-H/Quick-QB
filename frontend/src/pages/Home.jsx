@@ -119,7 +119,7 @@ const Home = () => {
                             ))}
                         </div>
                     )}
-                </div>  
+                </div>
             </div>
 
             {/* Suggestion/Complaint Button - Top Right */}

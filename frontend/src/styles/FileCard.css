@@ -89,12 +89,12 @@
     font-size: var(--font-size-medium);
     line-height: 1.6;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    height: 90px;
-    /* Fixed height to ensure consistent spacing */
+    min-height: 90px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-
+    gap: 6px;
 }
 
 .file-content .subject-name {
@@ -120,23 +120,19 @@
     -webkit-box-orient: vertical;
 }
 
+.file-content .uploaded-by {
+    margin: 0;
+    font-size: 12px;
+    color: var(--gray-500);
+    text-align: center;
+    padding: 0;
+    font-style: italic;
+}
+
 .file-content p {
     margin: 0;
     position: relative;
     padding-left: 18px;
-}
-
-/* This rule won't apply to elements with subject-name class */
-.file-content p:not(.subject-name)::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
 }
 
 .file-footer {

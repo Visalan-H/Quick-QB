@@ -21,6 +21,10 @@ const FileSchema = new Schema({
     sem:{
         type:String,
         required:true
+    },
+    uploadedBy: {
+        type: String,
+        default: null
     }
 })
 
