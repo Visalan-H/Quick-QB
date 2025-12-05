@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const File = require('../models/File');
+const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { verifyToken } = require('../utils/jwt');
 
 // Configure cloudinary
 cloudinary.config({
@@ -81,12 +83,24 @@ router.post('/new', upload.single('file'), async (req, res) => {
             return res.status(400).json({ msg: "No file uploaded" });
         }
 
+        // Get username from token if available
+        let uploadedBy = null;
+        const token = req.cookies?.token;
+        if (token) {
+            try {
+                const decoded = verifyToken(token);
+                const user = await User.findOne({ email: decoded.email });
+                if (user) uploadedBy = user.username;
+            } catch {}
+        }
+
         const newFile = await File.create({
             fileURL: req.file.path,
             subCode: req.body.subCode,
             contentType: req.body.contentType,
             subName: req.body.subName,
-            sem:req.body.sem
+            sem: req.body.sem,
+            uploadedBy
         });
 
         return res.status(201).json(newFile);

@@ -115,7 +115,7 @@
 .warning-main {
     font-size: 1.1rem;
     margin-bottom: 20px;
-    color: #ffffff;
+    color: #ededed;
     font-weight: 500;
 }
 
@@ -164,7 +164,7 @@
 }
 
 .responsibility-notice strong {
-    color: #ffffff;
+    color: #ededed;
     display: block;
     margin-bottom: 8px;
 }
@@ -242,7 +242,7 @@
 
 .cancel-btn {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: #ededed;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 

@@ -57,24 +57,23 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(102, 126, 234, 0.9);
-    color: white;
-    border: none;
+    background: var(--gray-400);
+    color: var(--gray-900);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     padding: 0.75rem 1.25rem;
     border-radius: 50px;
     font-weight: 600;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     font-size: 0.9rem;
 }
 
 .archive-toggle-button:hover {
-    background: rgba(102, 126, 234, 1);
+    background: white;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 .archive-toggle-button svg {
@@ -99,11 +98,11 @@
     top: 100%;
     left: 0;
     margin-top: 0.5rem;
-    background: rgba(75, 85, 99, 0.95);
+    background: var(--gray-400);
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     overflow: hidden;
     min-width: 120px;
     animation: dropdownFadeIn 0.2s ease-out;
@@ -125,9 +124,10 @@
     padding: 0.75rem 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
+    color: var(--gray-900);
     font-weight: 500;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--gray-400);
 }
 
 .archive-option:last-child {
@@ -135,17 +135,17 @@
 }
 
 .archive-option:hover {
-    background: rgba(102, 126, 234, 0.6);
+    background: rgba(0, 0, 0, 0.06);
 }
 
 .archive-option.selected {
-    background: rgba(102, 126, 234, 0.8);
+    background: #ffffff;
+    color: #000000;
     font-weight: 600;
 }
 
-.archive-option.selected {
-    background: rgba(102, 126, 234, 0.8);
-    font-weight: 600;
+.archive-option.selected:hover {
+    background: #f0f0f0;
 }
 
 /* Hide archive dropdown on mobile devices */
@@ -272,22 +272,24 @@
     padding: 14px 20px;
     width: 100%;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: white;
+    color: black;
     border: none;
     border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     display: inline-block;
 }
 
 .cta-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+    color: black;
 }
 
 /* No Files / Empty State */
@@ -325,8 +327,8 @@
 .empty-state-btn,
 .reset-search {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: white;
+    color: black;
     padding: 12px 24px;
     border-radius: 8px;
     text-decoration: none;
@@ -334,13 +336,15 @@
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .empty-state-btn:hover,
 .reset-search:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+    color: black;
 }
 
 /* Files Section */
@@ -558,7 +562,7 @@
     }
 }
 
-@media (max-width:450px){
+@media (max-width:450px) {
     .section-title {
         font-size: 1.5rem !important;
     }

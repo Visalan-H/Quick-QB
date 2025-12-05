@@ -1,0 +1,204 @@
+/* Login.css */
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.login-box {
+    background-color: rgba(30, 30, 30, 0.6);
+    padding: var(--space-xxl);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--gray-800);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+}
+
+.login-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+.login-box h1 {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-xxl) 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, var(--gray-200), var(--color-accent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-box .form-group {
+    margin-bottom: var(--space-xl);
+}
+
+.login-box label {
+    display: block;
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-medium);
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+.login-box input {
+    width: 100%;
+    padding: 18px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-700);
+    background-color: rgba(42, 42, 42, 0.4);
+    color: var(--color-primary);
+    font-size: var(--font-size-medium);
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+}
+
+.login-box input::placeholder {
+    color: var(--gray-500);
+}
+
+.login-box input:focus {
+    outline: none;
+    border-color: var(--gray-500);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.login-box button {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, var(--gray-200), var(--color-accent));
+    color: var(--gray-950);
+    border: none;
+    padding: 18px;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--space-lg);
+}
+
+.login-box button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-lg), 0 8px 25px rgba(255, 255, 255, 0.1);
+}
+
+.login-box button:disabled {
+    background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+    color: var(--gray-500);
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.login-box .error {
+    color: var(--gray-200);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
+    background-color: rgba(90, 90, 90, 0.15);
+    border-left: 4px solid var(--gray-400);
+    border-radius: 8px;
+    font-size: var(--font-size-normal);
+    text-align: left;
+}
+
+.login-box .register-link {
+    text-align: center;
+    margin-top: var(--space-xl);
+    color: var(--gray-400);
+    font-size: var(--font-size-normal);
+}
+
+.login-box .register-link a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: all 0.2s;
+}
+
+.login-box .register-link a:hover {
+    color: var(--color-primary);
+}
+
+/* Autofill styling */
+.login-box input:-webkit-autofill,
+.login-box input:-webkit-autofill:hover,
+.login-box input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px rgba(42, 42, 42, 0.8) inset !important;
+    -webkit-text-fill-color: var(--color-primary) !important;
+    transition: background-color 5000s ease-in-out 0s;
+    border-color: var(--gray-700);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-container {
+        padding: var(--space-md);
+    }
+
+    .login-box {
+        padding: var(--space-xl);
+    }
+
+    .login-box h1 {
+        font-size: 2rem;
+        margin-bottom: var(--space-xl);
+    }
+
+    .login-box input {
+        padding: 14px 16px;
+    }
+
+    .login-box button {
+        padding: 14px;
+    }
+}
