@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import Spinner from '../components/Spinner';
 import '../styles/Create.css';
 
@@ -19,13 +20,11 @@ const Login = () => {
         setError('');
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(formData)
-            });
-            const data = await res.json();
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/login`,
+                formData,
+                { withCredentials: true }
+            );
 
             if (data.success) {
                 navigate('/create');

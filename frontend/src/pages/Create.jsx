@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import Spinner from '../components/Spinner';
 import Alert from '../components/Alert';
 import '../styles/Create.css';
@@ -38,7 +39,9 @@ const Create = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);// Check if document exists
+    }, []);
+
+    // Check if document exists
     const checkDocumentExists = async (subCode, contentType) => {
         if (!subCode || subCode.length < 6 || !contentType) {
             setExistenceCheck(null);
@@ -46,8 +49,7 @@ const Create = () => {
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/check/${subCode}/${contentType}`);
-            const data = await response.json();
+            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/check/${subCode}/${contentType}`);
             setExistenceCheck(data);
         } catch (error) {
             console.error('Error checking document existence:', error);
@@ -285,22 +287,19 @@ const Create = () => {
         }
 
         try {
-            const data = new FormData(); data.append('file', formData.file);
-            data.append('subCode', formData.subCode);
-            data.append('contentType', formData.contentType);
-            data.append('subName', subName);
-            data.append('sem', "dec2025");
+            const formDataObj = new FormData();
+            formDataObj.append('file', formData.file);
+            formDataObj.append('subCode', formData.subCode);
+            formDataObj.append('contentType', formData.contentType);
+            formDataObj.append('subName', subName);
+            formDataObj.append('sem', "dec2025");
 
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/new`, {
-                method: 'POST',
-                credentials: 'include',
-                body: data,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.msg || 'Failed to upload file');
-            }            // Show success message with thank you note
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/new`, formDataObj, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });            // Show success message with thank you note
             setShowSuccess(true);
             setCountdown(8); // Reset countdown
 

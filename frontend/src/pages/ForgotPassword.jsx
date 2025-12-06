@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import Spinner from '../components/Spinner';
 import '../styles/Create.css';
 
@@ -25,12 +26,11 @@ const ForgotPassword = () => {
         setError('');
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/verify-email`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: formData.email })
-            });
-            const data = await res.json();
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/verify-email`,
+                { email: formData.email },
+                { withCredentials: true }
+            );
 
             if (data.success) {
                 setStep(2);
@@ -56,17 +56,16 @@ const ForgotPassword = () => {
         }
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/reset-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/reset-password`,
+                {
                     email: formData.email,
                     otp: Number(formData.otp),
                     newPassword: formData.newPassword,
                     confirmPassword: formData.confirmPassword
-                })
-            });
-            const data = await res.json();
+                },
+                { withCredentials: true }
+            );
 
             if (data.success) {
                 navigate('/login');

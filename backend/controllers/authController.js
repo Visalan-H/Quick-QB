@@ -19,10 +19,13 @@ const verifyEmail = async (req, res) => {
         const otp = crypto.randomInt(1000, 10000);
         await Otp.create({ email: normalizedEmail, otp, expiresAt: Date.now() + 5 * 60 * 1000 });
 
-        await sendOtp(normalizedEmail, otp);
+        console.log(`Sending OTP ${otp} to ${normalizedEmail}`);
+        const sent = await sendOtp(normalizedEmail, otp);
+        console.log(`OTP sent successfully to ${normalizedEmail}`);
         return res.status(200).json({ message: 'OTP sent', success: true });
     } catch (err) {
-        res.status(500).json({ message: 'Something went wrong', success: false });
+        console.error('Verify email error:', err.message);
+        res.status(500).json({ message: err.message || 'Failed to send OTP', success: false });
     }
 };
 

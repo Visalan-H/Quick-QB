@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 // Remove Fuse import
 import LoadingScreen from '../components/LoadingScreen';
 import FileCard from '../components/FileCard';
@@ -29,10 +30,7 @@ const Home = () => {
                     ? `${import.meta.env.VITE_BASE_URL}/all?sem=may2025`
                     : `${import.meta.env.VITE_BASE_URL}/all`;
 
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch files');
-                } const data = await response.json();
+                const { data } = await axios.get(url);
                 setFiles(data);
                 setFilteredFiles(data);
 
