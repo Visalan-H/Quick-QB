@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/SuggestionPortal.css';
 
 const SuggestionPortal = () => {
@@ -26,30 +27,19 @@ const SuggestionPortal = () => {
         setSubmitStatus(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/suggestions`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+            const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/suggestions`, formData);
+
+            setSubmitStatus({ type: 'success', message: data.msg });
+            // Reset form
+            setFormData({
+                type: 'suggestion',
+                title: '',
+                description: '',
+                userEmail: ''
             });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setSubmitStatus({ type: 'success', message: data.msg });
-                // Reset form
-                setFormData({
-                    type: 'suggestion',
-                    title: '',
-                    description: '',
-                    userEmail: ''
-                });
-            } else {
-                setSubmitStatus({ type: 'error', message: data.msg || 'Failed to submit feedback' });
-            }
-        } catch (error) {
-            setSubmitStatus({ type: 'error', message: 'Network error. Please try again.' });
+        } catch (err) {
+            const errorMessage = err.response?.data?.msg || 'Failed to submit feedback';
+            setSubmitStatus({ type: 'error', message: errorMessage });
         } finally {
             setIsSubmitting(false);
         }

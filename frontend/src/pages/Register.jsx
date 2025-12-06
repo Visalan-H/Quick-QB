@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import Spinner from '../components/Spinner';
 import '../styles/Create.css';
 
@@ -26,12 +27,11 @@ const Register = () => {
         setError('');
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/verify-email`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: formData.email })
-            });
-            const data = await res.json();
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/verify-email`,
+                { email: formData.email },
+                { withCredentials: true }
+            );
 
             if (data.success) {
                 setStep(2);
@@ -57,19 +57,17 @@ const Register = () => {
         }
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/register`,
+                {
                     username: formData.username,
                     email: formData.email,
                     otp: Number(formData.otp),
                     password: formData.password,
                     confirmPassword: formData.confirmPassword
-                })
-            });
-            const data = await res.json();
+                },
+                { withCredentials: true }
+            );
 
             if (data.success) {
                 navigate('/create');
