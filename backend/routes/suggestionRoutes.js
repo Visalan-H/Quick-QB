@@ -96,8 +96,7 @@ router.post('/', async (req, res) => {
             suggestion: newSuggestion
         });
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({
+        return res.status(500).json({
             msg: "Failed to submit feedback",
             error: error.message
         });
@@ -110,8 +109,7 @@ router.get('/', async (req, res) => {
         const suggestions = await Suggestion.find({}).sort({ createdAt: -1 });
         return res.status(200).json(suggestions);
     } catch (error) {
-        console.log(error);
-        return res.status(400).json(error);
+        return res.status(500).json({ error: 'Server error' });
     }
 });
 

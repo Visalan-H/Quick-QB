@@ -204,7 +204,8 @@ label {
     justify-content: center;
     padding: 18px 20px;
     background-color: rgba(42, 42, 42, 0.4);
-    color: white;    border: 1px solid #cccccc;
+    color: white;
+    border: 1px solid #cccccc;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1255,6 +1256,86 @@ input:autofill {
     color: black;
 }
 
+/* Auth Links Styling */
+.auth-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.auth-center-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--gray-400);
+}
+
+.link-text {
+    color: var(--gray-400);
+    font-size: 0.95rem;
+}
+
+.link-accent {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.link-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+}
+
+.link-accent:hover::after {
+    width: 100%;
+}
+
+.link-accent:hover {
+    opacity: 0.8;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.link-button::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+}
+
+.link-button:hover::after {
+    width: 100%;
+}
+
+.link-button:hover {
+    opacity: 0.8;
+}
+
 @media (max-width: 480px) {
     .success-actions {
         flex-direction: column;
@@ -1265,5 +1346,15 @@ input:autofill {
     .home-button {
         width: 100%;
         justify-content: center;
+    }
+
+    .auth-links {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .link-text {
+        font-size: 0.9rem;
     }
 }

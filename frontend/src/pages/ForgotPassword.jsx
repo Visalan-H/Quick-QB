@@ -27,9 +27,8 @@ const ForgotPassword = () => {
 
         try {
             const { data } = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/auth/verify-email`,
-                { email: formData.email },
-                { withCredentials: true }
+                `${import.meta.env.VITE_MAIL_SERVICE_URL}/send-otp`,
+                { email: formData.email, type: 'forgot-password' }
             );
 
             if (data.success) {
@@ -56,11 +55,23 @@ const ForgotPassword = () => {
         }
 
         try {
+            // Verify OTP with backend
+            const otpVerification = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/verify-otp`,
+                { email: formData.email, otp: formData.otp }
+            );
+
+            if (!otpVerification.data.success) {
+                setError(otpVerification.data.message || 'Invalid OTP');
+                setIsLoading(false);
+                return;
+            }
+
+            // Reset password with backend
             const { data } = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/auth/reset-password`,
                 {
                     email: formData.email,
-                    otp: Number(formData.otp),
                     newPassword: formData.newPassword,
                     confirmPassword: formData.confirmPassword
                 },
@@ -72,8 +83,8 @@ const ForgotPassword = () => {
             } else {
                 setError(data.message);
             }
-        } catch {
-            setError('Something went wrong');
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'Password reset failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -155,20 +166,19 @@ const ForgotPassword = () => {
                 </button>
 
                 {step === 2 && (
-                    <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--gray-400)' }}>
+                    <p className="auth-center-link">
                         <button
                             type="button"
                             onClick={() => { setStep(1); setError(''); setFormData({ ...formData, otp: '', newPassword: '', confirmPassword: '' }); }}
-                            style={{ background: 'none', border: 'none', color: 'var(--color-accent)', cursor: 'pointer', padding: 0, font: 'inherit' }}
-                            className="underline-animated"
+                            className="link-button"
                         >
                             ← Use different email
                         </button>
                     </p>
                 )}
 
-                <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--gray-400)' }}>
-                    Remember your password? <Link to="/login" className="underline-animated" style={{ color: 'var(--color-accent)' }}>Login</Link>
+                <p className="auth-center-link">
+                    Remember your password? <Link to="/login" className="link-accent">Login</Link>
                 </p>
             </form>
         </div>
