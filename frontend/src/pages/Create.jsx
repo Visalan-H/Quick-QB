@@ -132,7 +132,7 @@ const Create = () => {
         if (value.length > 2) {
             // Search through course names
             const results = Object.entries(coursesData)
-                .filter(([code, name]) =>
+                .filter(([, name]) =>
                     name.toLowerCase().includes(value.toLowerCase())
                 )
                 .slice(0, 10); // Limit to 10 results
@@ -267,13 +267,6 @@ const Create = () => {
     };
     const handleFileAreaClick = () => {
         document.getElementById('file').click();
-    }; const clearFileSelection = (e) => {
-        e.stopPropagation();
-        setFormData(prev => ({
-            ...prev,
-            file: null
-        }));
-        setSubName('');
     };
 
     const handleSubmit = async (e) => {
@@ -320,47 +313,50 @@ const Create = () => {
         } finally {
             setIsLoading(false);
         }
-    }; return (
-        <div className="create-container">            {showSuccess && (
-            <Alert
-                message={
-                    <div className="success-message-container">
-                        <div className="success-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                        </div>
-                        <h3>🎉 Upload Successful!</h3>
-                        <p>Your <strong>{formData.contentType === 'Questions' ? 'question bank' : 'answer key'}</strong> for <strong>{formData.subCode}</strong> has been successfully uploaded!</p>
-                        <p>Thank you for contributing to our growing repository and helping fellow students succeed. Your contribution makes a real difference! 📚✨</p>
-                        {/* <div className="success-stats">
+    };
+
+    return (
+        <div className="create-container">
+            {showSuccess && (
+                <Alert
+                    message={
+                        <div className="success-message-container">
+                            <div className="success-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <h3>Upload Successful!</h3>
+                            <p>Your <strong>{formData.contentType === 'Questions' ? 'question bank' : 'answer key'}</strong> for <strong>{formData.subCode}</strong> has been successfully uploaded!</p>
+                            <p>Thank you for contributing to our growing repository and helping fellow students succeed. Your contribution makes a real difference!</p>
+                            {/* <div className="success-stats">
                                 <span>📊 Join thousands of students who have benefited from shared resources</span>
                             </div> */}
-                        <div className="success-actions">
-                            <button
-                                onClick={() => {
-                                    setShowSuccess(false);
-                                    setCountdown(10);
-                                }}
-                                className="stay-button"
-                            >
-                                📤 Upload Another
-                            </button>
-                            <button
-                                onClick={() => navigate('/')}
-                                className="home-button"
-                            >
-                                🏠 Go Home Now
-                            </button>
+                            <div className="success-actions">
+                                <button
+                                    onClick={() => {
+                                        setShowSuccess(false);
+                                        setCountdown(10);
+                                    }}
+                                    className="stay-button"
+                                >
+                                    Upload Another
+                                </button>
+                                <button
+                                    onClick={() => navigate('/')}
+                                    className="home-button"
+                                >
+                                    Go Home Now
+                                </button>
+                            </div>
+                            <p className="redirect-note">Auto-redirecting in {countdown} second{countdown !== 1 ? 's' : ''}...</p>
                         </div>
-                        <p className="redirect-note">🏠 Auto-redirecting in {countdown} second{countdown !== 1 ? 's' : ''}...</p>
-                    </div>
-                }
-                type="success"
-                onClose={() => setShowSuccess(false)}
-            />
-        )}
+                    }
+                    type="success"
+                    onClose={() => setShowSuccess(false)}
+                />
+            )}
 
             {/* Utility Links with headers - with bigger icons */}
             <div className="utility-links-container">

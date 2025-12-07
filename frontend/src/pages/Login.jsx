@@ -78,9 +78,9 @@ const Login = () => {
                     {isLoading ? <Spinner /> : 'Login'}
                 </button>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', gap: '1rem' }}>
-                    <Link to="/forgot-password" className="underline-animated" style={{ color: 'var(--color-accent)' }}>Forgot password?</Link>
-                    <span style={{ color: 'var(--gray-400)' }}>Don't have an account? <Link to="/register" className="underline-animated" style={{ color: 'var(--color-accent)' }}>Register</Link></span>
+                <div className="auth-links">
+                    <Link to="/forgot-password" className="link-accent">Forgot password?</Link>
+                    <Link to="/register" className="link-accent">Sign Up</Link>
                 </div>
             </form>
         </div>

@@ -35,26 +35,25 @@ const upload = multer({ storage: storage });
 // GET /all - Get all files
 router.get('/all', async (req, res) => {
     try {
-        const {sem="dec2025"}=req.query;
-        const files = await File.find({sem:sem});
+        const { sem = "dec2025" } = req.query;
+        const files = await File.find({ sem: sem });
         if (files) {
             return res.status(200).json(files)
         }
         return res.status(404).json({ msg: "No files" })
 
     } catch (error) {
-        console.log(error);
-        return res.status(400).json(error)
+        return res.status(500).json({ error: 'Server error' })
     }
 });
 
 // GET /check/:subCode/:contentType - Check if document exists with content type
 router.get('/check/:subCode/:contentType', async (req, res) => {
     try {
-        const {sem="dec2025"} = req.query;
+        const { sem = "dec2025" } = req.query;
         const { subCode, contentType } = req.params;
         const existingFile = await File.findOne({
-            sem:sem,
+            sem: sem,
             subCode: subCode.toUpperCase(),
             contentType: contentType
         });
@@ -71,7 +70,6 @@ router.get('/check/:subCode/:contentType', async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ error: 'Server error' });
     }
 });
@@ -91,7 +89,7 @@ router.post('/new', upload.single('file'), async (req, res) => {
                 const decoded = verifyToken(token);
                 const user = await User.findOne({ email: decoded.email });
                 if (user) uploadedBy = user.username;
-            } catch {}
+            } catch { }
         }
 
         const newFile = await File.create({
@@ -105,8 +103,7 @@ router.post('/new', upload.single('file'), async (req, res) => {
 
         return res.status(201).json(newFile);
     } catch (error) {
-        console.log(error);
-        return res.status(400).json(error);
+        return res.status(500).json({ error: 'Upload failed' });
     }
 });
 

@@ -28,9 +28,8 @@ const Register = () => {
 
         try {
             const { data } = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/auth/verify-email`,
-                { email: formData.email },
-                { withCredentials: true }
+                `${import.meta.env.VITE_MAIL_SERVICE_URL}/send-otp`,
+                { email: formData.email, type: 'register' }
             );
 
             if (data.success) {
@@ -57,12 +56,24 @@ const Register = () => {
         }
 
         try {
+            // Verify OTP with backend
+            const otpVerification = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/verify-otp`,
+                { email: formData.email, otp: formData.otp }
+            );
+
+            if (!otpVerification.data.success) {
+                setError(otpVerification.data.message || 'Invalid OTP');
+                setIsLoading(false);
+                return;
+            }
+
+            // Register user with backend
             const { data } = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/auth/register`,
                 {
                     username: formData.username,
                     email: formData.email,
-                    otp: Number(formData.otp),
                     password: formData.password,
                     confirmPassword: formData.confirmPassword
                 },
@@ -74,8 +85,8 @@ const Register = () => {
             } else {
                 setError(data.message);
             }
-        } catch {
-            setError('Something went wrong');
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'Registration failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -84,7 +95,7 @@ const Register = () => {
     return (
         <div className="create-container">
             <header className="auth-header">
-                <h1>Register</h1>
+                <h1>Sign Up</h1>
                 <Link to="/" className="back-btn">← Back</Link>
             </header>
 
@@ -163,20 +174,19 @@ const Register = () => {
                 {error && <div className="error-message">{error}</div>}
 
                 <button type="submit" className="submit-btn" disabled={isLoading}>
-                    {isLoading ? <Spinner /> : step === 1 ? 'Verify Email' : 'Register'}
+                    {isLoading ? <Spinner /> : step === 1 ? 'Verify Email' : 'Sign Up'}
                 </button>
 
                 {step === 1 ? (
-                    <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--gray-400)' }}>
-                        Already have an account? <Link to="/login" className="underline-animated" style={{ color: 'var(--color-accent)' }}>Login</Link>
+                    <p className="auth-center-link">
+                        Already have an account? <Link to="/login" className="link-accent">Login</Link>
                     </p>
                 ) : (
-                    <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--gray-400)' }}>
+                    <p className="auth-center-link">
                         <button
                             type="button"
                             onClick={() => { setStep(1); setError(''); }}
-                            style={{ background: 'none', border: 'none', color: 'var(--color-accent)', cursor: 'pointer', textDecoration: 'none', padding: 0, font: 'inherit' }}
-                            className="underline-animated"
+                            className="link-button"
                         >
                             ← Change email
                         </button>

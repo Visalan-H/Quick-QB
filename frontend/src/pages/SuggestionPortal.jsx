@@ -70,8 +70,8 @@ const SuggestionPortal = () => {
                             onChange={handleInputChange}
                             required
                         >
-                            <option value="suggestion">💡 Suggestion</option>
-                            <option value="complaint">⚠️ Complaint/Issue</option>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="complaint">Complaint/Issue</option>
                         </select>
                     </div>
 
@@ -120,7 +120,7 @@ const SuggestionPortal = () => {
 
                     {submitStatus && (
                         <div className={`status-message ${submitStatus.type}`}>
-                            {submitStatus.type === 'success' ? '✅' : '❌'} {submitStatus.message}
+                            {submitStatus.type === 'success' ? '✓' : '✗'} {submitStatus.message}
                         </div>
                     )}
 
@@ -146,17 +146,17 @@ const SuggestionPortal = () => {
                     <h3>How we handle your feedback</h3>
                     <div className="info-cards">
                         <div className="info-card">
-                            <div className="card-icon">💡</div>
+                            <div className="card-icon">Suggestions</div>
                             <h4>Suggestions</h4>
                             <p>Your ideas help us improve features and add new functionality to make Quick-QB better for everyone.</p>
                         </div>
                         <div className="info-card">
-                            <div className="card-icon">⚠️</div>
+                            <div className="card-icon">Issues</div>
                             <h4>Issues</h4>
                             <p>Report bugs, errors, or problems you encounter. We prioritize fixing issues to ensure a smooth experience.</p>
                         </div>
                         <div className="info-card">
-                            <div className="card-icon">🔒</div>
+                            <div className="card-icon">Privacy</div>
                             <h4>Privacy</h4>
                             <p>Your feedback is confidential. Email addresses are only used for follow-up communication if needed.</p>
                         </div>
