@@ -1,11 +1,14 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Spinner from '../components/Spinner';
 import Alert from '../components/Alert';
 import '../styles/Create.css';
 import '../styles/help-text.css';
-import coursesData from '../../unique_courses.json';
+import coursesData from '../assets/unique_courses.json';
+
+const CURRENT_SEM = 'apr2026';
+const normalizeCourseCode = (value = '') => value.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
 const Create = () => {
     const navigate = useNavigate();
@@ -25,8 +28,44 @@ const Create = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const dropdownRef = useRef(null);
+    const searchResultItemRefs = useRef([]);
     const debounceRef = useRef(null);
     const searchInputRef = useRef(null);    // Close dropdown when clicking outside
+
+    const { courseCodeToName, searchableCourses } = useMemo(() => {
+        const map = {};
+        const courses = [];
+
+        const addCourse = (code, name) => {
+            const normalizedCode = normalizeCourseCode(code);
+            const normalizedName = (name || '').trim();
+            if (!normalizedCode || !normalizedName || normalizedCode === 'NA') {
+                return;
+            }
+
+            if (!map[normalizedCode]) {
+                map[normalizedCode] = normalizedName;
+                courses.push({ code: normalizedCode, name: normalizedName });
+            }
+        };
+
+        if (Array.isArray(coursesData)) {
+            coursesData.forEach((course) => {
+                addCourse(course?.code19, course?.name);
+                addCourse(course?.code24, course?.name);
+            });
+        } else {
+            Object.entries(coursesData || {}).forEach(([code, name]) => {
+                addCourse(code, name);
+            });
+        }
+
+        return {
+            courseCodeToName: map,
+            searchableCourses: courses
+        };
+    }, []);
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -41,6 +80,17 @@ const Create = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (!showDropdown || selectedIndex < 0) {
+            return;
+        }
+
+        const selectedItem = searchResultItemRefs.current[selectedIndex];
+        if (selectedItem) {
+            selectedItem.scrollIntoView({ block: 'nearest' });
+        }
+    }, [selectedIndex, showDropdown]);
+
     // Check if document exists
     const checkDocumentExists = async (subCode, contentType) => {
         if (!subCode || subCode.length < 6 || !contentType) {
@@ -49,7 +99,7 @@ const Create = () => {
         }
 
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/check/${subCode}/${contentType}`);
+            const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/check/${subCode}/${contentType}?sem=${CURRENT_SEM}`);
             setExistenceCheck(data);
         } catch (error) {
             console.error('Error checking document existence:', error);
@@ -93,7 +143,7 @@ const Create = () => {
 
         // Capitalize subject code if that's what changed
         if (name === 'subCode') {
-            const upperCaseValue = value.toUpperCase();
+            const upperCaseValue = normalizeCourseCode(value);
 
             // Set the form data with uppercase value
             setFormData(prev => ({
@@ -103,8 +153,8 @@ const Create = () => {
             debouncedCheckDocumentExists(upperCaseValue, formData.contentType);
 
             // Look up the course name in coursesData if a code is entered directly
-            if (upperCaseValue && coursesData[upperCaseValue]) {
-                const courseName = coursesData[upperCaseValue];
+            if (upperCaseValue && courseCodeToName[upperCaseValue]) {
+                const courseName = courseCodeToName[upperCaseValue];
                 setSubName(courseName);
                 setSearchTerm(courseName);
             } else if (upperCaseValue) {
@@ -129,13 +179,16 @@ const Create = () => {
         setSearchTerm(value);
         setSelectedIndex(-1); // Reset selection when typing
 
-        if (value.length > 2) {
-            // Search through course names
-            const results = Object.entries(coursesData)
-                .filter(([, name]) =>
-                    name.toLowerCase().includes(value.toLowerCase())
+        const query = value.trim().toLowerCase();
+
+        if (query.length > 1) {
+            // Search through course names and codes
+            const results = searchableCourses
+                .filter(({ code, name }) =>
+                    name.toLowerCase().includes(query) || code.toLowerCase().includes(query)
                 )
-                .slice(0, 10); // Limit to 10 results
+                .slice(0, 10)
+                .map(({ code, name }) => [code, name]);
 
             setSearchResults(results);
             setShowDropdown(results.length > 0);
@@ -269,6 +322,12 @@ const Create = () => {
         document.getElementById('file').click();
     };
 
+    const getErrorMessage = (err, fallback) => {
+        if (err?.response?.data?.message) return err.response.data.message;
+        if (err?.response?.data?.error) return err.response.data.error;
+        if (err?.code === 'ERR_NETWORK') return 'Unable to reach server. Please check your internet connection.';
+        return fallback;
+    };
     const handleSubmit = async (e) => {
         e.preventDefault(); setIsLoading(true);
         setError(null);
@@ -285,7 +344,7 @@ const Create = () => {
             formDataObj.append('subCode', formData.subCode);
             formDataObj.append('contentType', formData.contentType);
             formDataObj.append('subName', subName);
-            formDataObj.append('sem', "dec2025");
+            formDataObj.append('sem', CURRENT_SEM);
 
             await axios.post(`${import.meta.env.VITE_BASE_URL}/new`, formDataObj, {
                 withCredentials: true,
@@ -309,7 +368,7 @@ const Create = () => {
             // Note: Navigation now handled by countdown useEffect
 
         } catch (err) {
-            setError(err.message);
+            setError(getErrorMessage(err, 'Unable to upload file right now. Please try again.'));
         } finally {
             setIsLoading(false);
         }
@@ -408,6 +467,9 @@ const Create = () => {
                             searchResults.map(([code, name], index) => (
                                 <div
                                     key={code}
+                                    ref={(element) => {
+                                        searchResultItemRefs.current[index] = element;
+                                    }}
                                     className={`search-result-item ${index === selectedIndex ? 'selected' : ''}`}
                                     onClick={() => handleCourseSelect(code, name)}
                                     onMouseEnter={() => setSelectedIndex(index)}
@@ -463,7 +525,7 @@ const Create = () => {
                 </div>
 
                 {/* Custom subject name field - show only when subject code is entered but not found in database */}
-                {formData.subCode && !coursesData[formData.subCode] && (
+                {formData.subCode && !courseCodeToName[formData.subCode] && (
                     <div className="form-group">
                         <label htmlFor="customSubName">Subject Name <span className="required">*</span></label>
                         <input

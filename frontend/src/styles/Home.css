@@ -13,11 +13,18 @@
     /* Added top padding for space */
 }
 
-/* Suggestion Button - Top Right */
-.suggestion-button {
+/* Top-right quick actions */
+.quick-actions {
     position: fixed;
     top: 2rem;
     right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    z-index: 1000;
+}
+
+.top-action-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -31,18 +38,27 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-    z-index: 1000;
     box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
+    cursor: pointer;
 }
 
-.suggestion-button:hover {
+.top-action-button:hover {
     background: rgba(75, 85, 99, 1);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
 }
 
-.suggestion-button svg {
+.top-action-button svg {
     flex-shrink: 0;
+}
+
+.logout-button {
+    font-family: inherit;
+}
+
+.logout-button span,
+.suggestion-button span {
+    line-height: 1;
 }
 
 /* Archive Dropdown - Top Left */
@@ -695,10 +711,14 @@
         gap: 25px;
     }
 
-    /* Responsive suggestion button */
-    .suggestion-button {
+    .quick-actions {
         top: 1rem;
         right: 1rem;
+        gap: 0.5rem;
+    }
+
+    /* Responsive top-right action buttons */
+    .top-action-button {
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
     }
@@ -718,8 +738,12 @@
         font-size: 2.8rem;
     }
 
-    .suggestion-button {
+    .quick-actions {
         top: 0.8rem;
+        right: 1rem;
+    }
+
+    .top-action-button {
         padding: 0.75rem 1.25rem;
     }
 
@@ -731,9 +755,13 @@
 
 /* Mobile specific styles */
 @media (max-width: 480px) {
-    .suggestion-button {
+    .quick-actions {
         top: 0.75rem;
         right: 0.75rem;
+        gap: 0.4rem;
+    }
+
+    .top-action-button {
         padding: 0.75rem 1.25rem;
         font-size: 0.8rem;
     }
@@ -743,7 +771,7 @@
         left: 0.75rem;
     }
 
-    .suggestion-button span {
+    .top-action-button span {
         display: none;
         /* Hide text on very small screens, show only icon */
     }

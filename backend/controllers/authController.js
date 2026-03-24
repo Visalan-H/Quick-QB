@@ -3,47 +3,37 @@ const Otp = require('../models/Otp');
 const { hashPassword, comparePassword } = require('../utils/bcrypt');
 const { generateToken } = require('../utils/jwt');
 
-const verifyOtp = async (req, res) => {
+const register = async (req, res) => {
     try {
-        const { email, otp } = req.body;
-        const otpData = await Otp.findOne({ email });
+        const { username, email, otp, password } = req.body;
 
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: 'An account with this email already exists. Please log in.' });
+        }
+
+        const otpData = await Otp.findOne({ email });
         if (!otpData) {
-            return res.status(400).json({ success: false, message: 'OTP Not Found' });
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
         }
 
         if (otpData.expiresAt < Date.now()) {
             await Otp.deleteOne({ email });
-            return res.status(400).json({ success: false, message: 'OTP Expired' });
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
         }
 
-        if (otpData.otp !== parseInt(otp)) {
-            return res.status(400).json({ success: false, message: 'Invalid OTP' });
-        }
-
-        await Otp.deleteOne({ email });
-        res.json({ success: true, message: 'OTP verified' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: 'Something went wrong' });
-    }
-};
-
-const register = async (req, res) => {
-    try {
-        const { username, email, password } = req.body;
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already registered', success: false });
+        if (otpData.otp !== parseInt(otp, 10)) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
         }
 
         const hashedPassword = await hashPassword(password);
         await User.create({ username, email, password: hashedPassword });
+        await Otp.deleteOne({ email });
 
         generateToken(email, res);
-        res.status(201).json({ message: 'Registered successfully', success: true });
+        res.status(201).json({ success: true, message: 'Account created successfully.' });
     } catch (err) {
-        res.status(500).json({ message: 'Something went wrong', success: false });
+        res.status(500).json({ success: false, message: 'Unable to create your account right now. Please try again.' });
     }
 };
 
@@ -53,17 +43,17 @@ const login = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials', success: false });
+            return res.status(400).json({ success: false, message: 'Invalid email or password.' });
         }
 
         if (!(await comparePassword(password, user.password))) {
-            return res.status(400).json({ message: 'Invalid credentials', success: false });
+            return res.status(400).json({ success: false, message: 'Invalid email or password.' });
         }
 
         generateToken(email, res);
-        res.status(200).json({ message: 'Login successful', success: true });
+        res.status(200).json({ success: true, message: 'Logged in successfully.' });
     } catch (err) {
-        res.status(500).json({ message: 'Something went wrong', success: false });
+        res.status(500).json({ success: false, message: 'Unable to log in right now. Please try again.' });
     }
 };
 
@@ -72,29 +62,45 @@ const logout = (req, res) => {
         res.clearCookie('token', {
             httpOnly: true,
             secure: true,
-            sameSite: 'none'
+            sameSite: 'none',
+            path: '/'
         });
-        res.status(200).json({ message: 'Logout successful', success: true });
+        res.status(200).json({ success: true, message: 'Logged out successfully.' });
     } catch (err) {
-        res.status(500).json({ message: 'Something went wrong', success: false });
+        res.status(500).json({ success: false, message: 'Unable to log out right now. Please try again.' });
     }
 };
 
 const resetPassword = async (req, res) => {
     try {
-        const { email, newPassword } = req.body;
+        const { email, otp, newPassword } = req.body;
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid request', success: false });
+            return res.status(400).json({ success: false, message: 'Unable to reset password with the provided details.' });
+        }
+
+        const otpData = await Otp.findOne({ email });
+        if (!otpData) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
+        }
+
+        if (otpData.expiresAt < Date.now()) {
+            await Otp.deleteOne({ email });
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
+        }
+
+        if (otpData.otp !== parseInt(otp, 10)) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code.' });
         }
 
         const hashedPassword = await hashPassword(newPassword);
         await User.updateOne({ email }, { $set: { password: hashedPassword } });
+        await Otp.deleteOne({ email });
 
-        res.status(200).json({ message: 'Password reset successfully', success: true });
+        res.status(200).json({ success: true, message: 'Password reset successfully. Please log in.' });
     } catch (err) {
-        res.status(500).json({ message: 'Something went wrong', success: false });
+        res.status(500).json({ success: false, message: 'Unable to reset password right now. Please try again.' });
     }
 };
 
@@ -102,4 +108,4 @@ const checkAuth = (req, res) => {
     res.status(200).json({ success: true, email: req.user.email });
 };
 
-module.exports = { verifyOtp, register, login, logout, resetPassword, checkAuth };
+module.exports = { register, login, logout, resetPassword, checkAuth };

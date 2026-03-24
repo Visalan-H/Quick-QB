@@ -1,24 +1,29 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // Remove Fuse import
 import LoadingScreen from '../components/LoadingScreen';
 import FileCard from '../components/FileCard';
 import '../styles/Home.css';
 
+const CURRENT_SEM = 'apr2026';
+
 const Home = () => {
+    const navigate = useNavigate();
     const [files, setFiles] = useState([]);
     const [filteredFiles, setFilteredFiles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // Archive dropdown state
     const [showArchiveDropdown, setShowArchiveDropdown] = useState(false);
-    const [selectedArchive, setSelectedArchive] = useState('dec2025');
+    const [selectedArchive, setSelectedArchive] = useState(CURRENT_SEM);
     const archiveDropdownRef = useRef(null);
 
     const archiveOptions = [
+        { value: CURRENT_SEM, label: 'Apr 2026 (Current)' },
         { value: 'dec2025', label: 'Dec 2025' },
         { value: 'may2025', label: 'May 2025' }
     ];
@@ -26,9 +31,7 @@ const Home = () => {
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const url = selectedArchive === 'may2025'
-                    ? `${import.meta.env.VITE_BASE_URL}/all?sem=may2025`
-                    : `${import.meta.env.VITE_BASE_URL}/all`;
+                const url = `${import.meta.env.VITE_BASE_URL}/all?sem=${selectedArchive}`;
 
                 const { data } = await axios.get(url);
                 setFiles(data);
@@ -45,6 +48,22 @@ const Home = () => {
 
         fetchFiles();
     }, [selectedArchive]);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${import.meta.env.VITE_BASE_URL}/auth/check`,
+                    { withCredentials: true }
+                );
+                setIsAuthenticated(Boolean(data?.success));
+            } catch {
+                setIsAuthenticated(false);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     // Handle clicks outside archive dropdown
     useEffect(() => {
@@ -76,6 +95,21 @@ const Home = () => {
         );
 
         setFilteredFiles(filtered);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/auth/logout`,
+                {},
+                { withCredentials: true }
+            );
+        } catch {
+            // Even on API failure, we still redirect to login to avoid stale authenticated UI.
+        } finally {
+            setIsAuthenticated(false);
+            navigate('/login');
+        }
     };
 
     if (loading) return <LoadingScreen />;
@@ -120,12 +154,28 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Suggestion/Complaint Button - Top Right */}
-            <Link to="/suggestions" className="suggestion-button" title='Provide feedback'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-            </Link>            <section className="hero-section">
+            {/* Suggestion + Logout Actions - Top Right */}
+            <div className="quick-actions">
+                <Link to="/suggestions" className="top-action-button suggestion-button" title='Provide feedback'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Feedback</span>
+                </Link>
+
+                {isAuthenticated && (
+                    <button className="top-action-button logout-button" onClick={handleLogout} title="Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                )}
+            </div>
+
+            <section className="hero-section">
                 <div className="hero-content">
                     <h1>Quick-QB</h1>
                     <p className="hero-subtitle">Access and contribute to a community-driven question bank for your academic subjects.</p>
@@ -157,7 +207,7 @@ const Home = () => {
                                 </button>
                             )}
                         </div>
-                        {selectedArchive === "dec2025" && <Link to="/create" className="cta-button">Upload Resource</Link>}
+                        {selectedArchive === CURRENT_SEM && <Link to="/create" className="cta-button">Upload Resource</Link>}
                     </div>
                 </div>
             </section>
@@ -188,7 +238,9 @@ const Home = () => {
                                 </svg>
                             </div>
                             <p>No study materials available yet.</p>
-                            <Link to="/create" className="empty-state-btn">Upload Your First Resource</Link>
+                            {selectedArchive === CURRENT_SEM && (
+                                <Link to="/create" className="empty-state-btn">Upload Your First Resource</Link>
+                            )}
                         </>
                     )}
                 </div>

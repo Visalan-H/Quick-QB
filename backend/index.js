@@ -1,4 +1,5 @@
 require('dotenv').config();
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require('express');
 const mongoose = require('mongoose')
 const cors = require('cors');
@@ -20,7 +21,10 @@ app.use(cookieParser());
 
 app.use(cors({
     origin: [process.env.FRONTEND_URL_VERCEL, process.env.FRONTEND_URL_CF],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie']
 }));
 
 // Use routes
@@ -35,5 +39,6 @@ mongoose.connect(MDB_URL)
         })
     })
     .catch((err) => {
+        console.error("Failed to connect to MongoDB", err);
         process.exit(1);
     })
