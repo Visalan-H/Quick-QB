@@ -16,6 +16,13 @@ const ForgotPassword = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const getErrorMessage = (err, fallback) => {
+        if (err?.response?.data?.message) return err.response.data.message;
+        if (err?.response?.data?.error) return err.response.data.error;
+        if (err?.code === 'ERR_NETWORK') return 'Unable to reach server. Please check your internet connection.';
+        return fallback;
+    };
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -36,8 +43,8 @@ const ForgotPassword = () => {
             } else {
                 setError(data.message);
             }
-        } catch {
-            setError('Something went wrong');
+        } catch (err) {
+            setError(getErrorMessage(err, 'Unable to send OTP right now. Please try again.'));
         } finally {
             setIsLoading(false);
         }
@@ -55,23 +62,12 @@ const ForgotPassword = () => {
         }
 
         try {
-            // Verify OTP with backend
-            const otpVerification = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/auth/verify-otp`,
-                { email: formData.email, otp: formData.otp }
-            );
-
-            if (!otpVerification.data.success) {
-                setError(otpVerification.data.message || 'Invalid OTP');
-                setIsLoading(false);
-                return;
-            }
-
-            // Reset password with backend
+            // Reset password with backend (OTP is validated server-side)
             const { data } = await axios.post(
                 `${import.meta.env.VITE_BASE_URL}/auth/reset-password`,
                 {
                     email: formData.email,
+                    otp: formData.otp,
                     newPassword: formData.newPassword,
                     confirmPassword: formData.confirmPassword
                 },
@@ -83,8 +79,8 @@ const ForgotPassword = () => {
             } else {
                 setError(data.message);
             }
-        } catch (error) {
-            setError(error.response?.data?.message || error.message || 'Password reset failed. Please try again.');
+        } catch (err) {
+            setError(getErrorMessage(err, 'Unable to reset password right now. Please try again.'));
         } finally {
             setIsLoading(false);
         }
@@ -127,7 +123,7 @@ const ForgotPassword = () => {
                                 autoFocus
                             />
                             <small style={{ marginTop: '0.5rem', color: 'var(--gray-400)' }}>
-                                Check your email for the verification code
+                                Check your email for the verification code. If the email is eligible, an OTP will be sent.
                             </small>
                         </div>
 

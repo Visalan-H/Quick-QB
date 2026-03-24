@@ -9,12 +9,8 @@ export const sendOtpEmail = async (email: string, type: 'register' | 'forgot-pas
 
     const userExists = await User.findOne({ email: normalizedEmail });
 
-    if (type === 'register' && userExists) {
-        throw new Error('Email already registered');
-    }
-    
-    if (type === 'forgot-password' && !userExists) {
-        throw new Error('Email not registered');
+    if ((type === 'register' && userExists) || (type === 'forgot-password' && !userExists)) {
+        return false;
     }
 
     await Otp.deleteOne({ email: normalizedEmail });

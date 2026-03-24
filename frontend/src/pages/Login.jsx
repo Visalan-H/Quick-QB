@@ -10,6 +10,13 @@ const Login = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const getErrorMessage = (err, fallback) => {
+        if (err?.response?.data?.message) return err.response.data.message;
+        if (err?.response?.data?.error) return err.response.data.error;
+        if (err?.code === 'ERR_NETWORK') return 'Unable to reach server. Please check your internet connection.';
+        return fallback;
+    };
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -31,8 +38,8 @@ const Login = () => {
             } else {
                 setError(data.message);
             }
-        } catch {
-            setError('Something went wrong');
+        } catch (err) {
+            setError(getErrorMessage(err, 'Unable to log in right now. Please try again.'));
         } finally {
             setIsLoading(false);
         }
